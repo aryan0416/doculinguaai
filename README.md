@@ -93,64 +93,69 @@ DocuLinguaAI employs a modern, decoupled client-server architecture designed for
 
 ```mermaid
 flowchart TD
-    User([User Browser])
+    User(["User Browser"])
     
     subgraph Frontend ["Frontend Web Application (Vanilla JS / TailwindCSS)"]
-        UI[Glassmorphism SPA Interface]
-        GIS[Google Identity Services SDK]
-        Audio[HTML5 Audio Player]
+        UI["Glassmorphism SPA Interface"]
+        GIS["Google Identity Services SDK"]
+        Audio["HTML5 Audio Player"]
     end
 
     subgraph BackendGateway ["FastAPI Application Layer (Uvicorn / Port 8000)"]
-        Auth[OAuth2 & JWT Verification]
-        Router[API Router & Route Guards]
-        CORS[CORS Middleware]
+        Auth["OAuth2 & JWT Verification"]
+        Router["API Router & Route Guards"]
+        CORS["CORS Middleware"]
     end
 
     subgraph Ingestion ["Ingestion & OCR Pipeline"]
-        Validator[File & MIME Validator]
-        PDFEng[pdfplumber PDF Engine]
-        DocxEng[python-docx Engine]
-        OCREng[Tesseract OCR + Pillow Engine]
+        Validator["File & MIME Validator"]
+        PDFEng["pdfplumber PDF Engine"]
+        DocxEng["python-docx Engine"]
+        OCREng["Tesseract OCR + Pillow Engine"]
     end
 
     subgraph PrivacyNLP ["Privacy & NLP Processing Engines"]
-        Presidio[Microsoft Presidio PII De-identifier]
-        SpaCyEng[SpaCy en_core_web_lg NER]
-        VaderEng[VADER Sentiment Intensity Analyzer]
-        YakeEng[YAKE Unsupervised Keyword Extractor]
-        LangDetect[LangDetect Language Identifier]
+        Presidio["Microsoft Presidio PII De-identifier"]
+        SpaCyEng["SpaCy en_core_web_lg NER"]
+        VaderEng["VADER Sentiment Intensity Analyzer"]
+        YakeEng["YAKE Unsupervised Keyword Extractor"]
+        LangDetect["LangDetect Language Identifier"]
     end
 
     subgraph TranslationTTS ["Edge Translation & Speech Synthesis"]
-        Argos[ArgosTranslate Neural Engine (Local)]
-        GTTS[gTTS Audio Streamer]
+        Argos["ArgosTranslate Neural Engine (Local)"]
+        GTTS["gTTS Audio Streamer"]
     end
 
     subgraph CloudLLM ["Cloud Acceleration (Groq API)"]
-        LLaMA[Groq LLaMA-3-70B Inference Engine]
+        LLaMA["Groq LLaMA-3-70B Inference Engine"]
     end
 
     subgraph Persistence ["Persistence Layer"]
-        DB[(SQLite / SQLAlchemy ORM)]
+        DB[("SQLite / SQLAlchemy ORM")]
     end
 
     User --> UI
     UI --> GIS
-    UI -->|REST API Requests + Bearer Token| CORS
+    UI -->|"REST API Requests + Bearer Token"| CORS
     CORS --> Router
     Router --> Auth
     Auth --> Validator
     Validator --> PDFEng
     Validator --> DocxEng
     Validator --> OCREng
-    PDFEng & DocxEng & OCREng --> Presidio
-    Presidio --> SpaCyEng & VaderEng & YakeEng & LangDetect
+    PDFEng --> Presidio
+    DocxEng --> Presidio
+    OCREng --> Presidio
+    Presidio --> SpaCyEng
+    Presidio --> VaderEng
+    Presidio --> YakeEng
+    Presidio --> LangDetect
     Router --> Argos
     Router --> GTTS
     Router --> LLaMA
     Router --> DB
-    GTTS -->|Streaming MP3| Audio
+    GTTS -->|"Streaming MP3"| Audio
 ```
 
 ### 2.2 Ingestion & Processing Pipeline
@@ -169,7 +174,7 @@ sequenceDiagram
     participant DB as SQLite DB
 
     Client->>API: POST /upload (File + redact_pii flag)
-    API->>API: Validate file extension & size (<= 50MB)
+    API->>API: Validate file extension & size (max 50MB)
     alt PDF file
         API->>Ingest: pdfplumber extraction
     else DOCX file
@@ -188,8 +193,8 @@ sequenceDiagram
 
     par Parallel NLP Analysis
         API->>Analytics: Detect language & confidence
-        API->>Analytics: Extract document stats (words, sentences, chars)
-        API->>Analytics: Run SpaCy NER (Named Entity Recognition)
+        API->>Analytics: Extract document stats
+        API->>Analytics: Run SpaCy NER
         API->>Analytics: Run VADER Sentiment Analysis
         API->>Analytics: Run YAKE Keyword Extraction
     end
@@ -197,10 +202,10 @@ sequenceDiagram
     API->>LLM: Generate Abstractive Document Summary
     LLM-->>API: Concise Summary Text
 
-    API->>DB: Store Document record (owner_id, text, analysis JSON)
+    API->>DB: Store Document record
     DB-->>API: Saved document_id
 
-    API-->>Client: 200 OK (document_id, text, summary, entities, sentiment, keywords)
+    API-->>Client: 200 OK (document_id, text, summary, analytics)
 ```
 
 ### 2.3 Authentication & Authorization Lifecycle
@@ -351,7 +356,7 @@ erDiagram
     USERS ||--o{ DOCUMENTS : "owns and uploads"
     
     USERS {
-        int id PK "Primary Key (Auto-increment)"
+        int id PK "Primary Key"
         string email UK "Unique User Email"
         string name "Full Name"
         string picture "Google Avatar URL"
@@ -359,13 +364,13 @@ erDiagram
     }
 
     DOCUMENTS {
-        int id PK "Primary Key (Auto-increment)"
+        int id PK "Primary Key"
         string filename "Uploaded Original Filename"
-        text original_text "Extracted Text (or Redacted)"
-        text translated_text "Translated Text (Optional)"
+        text original_text "Extracted Text"
+        text translated_text "Translated Text"
         text analysis_results "JSON Encoded Analysis Payload"
         datetime created_at "Upload Timestamp UTC"
-        int owner_id FK "Foreign Key -> USERS.id"
+        int owner_id FK "Foreign Key to USERS id"
     }
 ```
 
