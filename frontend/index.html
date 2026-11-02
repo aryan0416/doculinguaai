@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuLinguaAI - Intelligent Multi-lingual Document Understanding</title>
+    <meta name="description" content="Advanced document processing with multi-language support, AI-powered analysis, and intelligent Q&A">
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'light-bg': '#f8f9fa',
+                        'light-card': '#ffffff',
+                        'light-border': '#dee2e6',
+                        'light-text': '#212529',
+                        'light-text-sec': '#6c757d',
+                        'dark-bg': '#0d1117',
+                        'dark-card': '#161b22',
+                        'dark-border': '#30363d',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen font-poppins transition-colors duration-300 bg-light-bg text-light-text dark:bg-dark-bg dark:text-gray-300">
+
+    <header class="border-b bg-light-card/80 border-light-border dark:bg-dark-card/50 dark:border-dark-border backdrop-blur-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="brain-circuit" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-light-text dark:text-white">DocuLinguaAI</h1>
+                    <p class="text-xs text-light-text-sec dark:text-gray-400">Intelligent Document Understanding</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="userProfile" class="hidden items-center space-x-3">
+                    <img id="userAvatar" class="w-8 h-8 rounded-full" src="" alt="User Avatar">
+                    <span id="userName" class="text-sm font-medium text-light-text dark:text-white"></span>
+                    <button id="logoutBtn" class="action-btn text-sm">Logout</button>
+                </div>
+                <button id="themeToggle" class="p-2 rounded-lg bg-light-bg border border-light-border text-light-text-sec hover:bg-gray-200 dark:bg-dark-card dark:border-dark-border dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
+                    <i data-lucide="sun" class="w-5 h-5 theme-icon"></i>
+                </button>
+                <button id="helpBtn" class="p-2 rounded-lg bg-light-bg border border-light-border text-light-text-sec hover:bg-gray-200 dark:bg-dark-card dark:border-dark-border dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
+                    <i data-lucide="help-circle" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="loginSection" class="container mx-auto px-6 py-12 flex items-center justify-center min-h-[calc(100vh-80px)]">
+        <div class="login-card grid md:grid-cols-2 gap-8 md:gap-12 items-center max-w-4xl w-full">
+            
+            <div class="space-y-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <i data-lucide="brain-circuit" class="w-7 h-7 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-light-text dark:text-white">DocuLinguaAI</h1>
+                        <p class="text-sm text-light-text-sec dark:text-gray-400">Intelligent Document Understanding</p>
+                    </div>
+                </div>
+                <p class="text-light-text-sec dark:text-gray-400">
+                    Unlock powerful AI tools to analyze, translate, and interact with your documents like never before.
+                </p>
+                <div class="feature-list space-y-4">
+                    <div class="feature-item">
+                        <i data-lucide="file-check-2" class="text-green-500"></i>
+                        <span>Analyze PDFs, DOCX, and Images</span>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="volume-2" class="text-blue-500"></i>
+                        <span>Listen to Your Documents</span>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="shield-check" class="text-purple-500"></i>
+                        <span>Detect & Redact Sensitive Data</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center md:text-left">
+                <h2 class="text-2xl font-semibold mb-2 text-light-text dark:text-white">Get Started</h2>
+                <p class="text-light-text-sec dark:text-gray-400 mb-8">Sign in with your Google account to continue.</p>
+                
+                <div class="flex justify-center md:justify-start">
+                    <div id="g_id_onload"
+                         data-client_id="1038606541249-qsjuftnq9lmp01nl1fe14qdb3aruaqje.apps.googleusercontent.com" 
+                         data-callback="handleGoogleSignIn">
+                    </div>
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="sign_in_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+                 <p class="text-xs text-light-text-sec dark:text-gray-500 mt-6 text-center md:text-left">
+                    By signing in, you agree to our terms of service.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <main id="appContent" class="hidden container mx-auto px-6 py-8 space-y-8">
+        <section class="glass-card rounded-2xl p-8">
+            <div class="max-w-2xl mx-auto space-y-6">
+                <h3 class="text-2xl font-semibold text-light-text dark:text-white text-center flex items-center justify-center gap-2">
+                    <i data-lucide="upload-cloud" class="w-6 h-6 text-blue-400"></i>
+                    Upload Your Document
+                </h3>
+                <div class="file-input-wrapper w-full">
+                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.bmp,.tiff">
+                    <label for="fileInput" class="file-input-button w-full p-8 text-center rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] block border-2 border-dashed border-light-border dark:border-dark-border hover:border-blue-400">
+                        <div class="space-y-4">
+                            <div class="w-16 h-16 mx-auto bg-blue-500/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="file-plus" class="w-8 h-8 text-blue-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-lg font-medium text-light-text dark:text-white">Drop your file here or click to browse</p>
+                                <p class="text-sm text-light-text-sec dark:text-gray-400 mt-2">Supports PDF, DOCX, TXT, and Images up to 50MB</p>
+                            </div>
+                            <div class="text-sm text-gray-500" id="fileName">No file selected</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 items-center">
+                    <div class="w-full">
+                        <button id="uploadBtn" class="w-full px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <i data-lucide="zap" class="w-5 h-5 button-icon-el" id="button-icon"></i>
+                            <span class="spinner"></span>
+                            <span id="button-text">Analyze Document</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="redactPiiCheckbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="redactPiiCheckbox" class="ml-2 block text-sm text-light-text-sec dark:text-gray-400">
+                        Redact Personal Information (PII)
+                    </label>
+                </div>
+                <div id="progressContainer" class="hidden">
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div id="progressBar" class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div></div>
+                    <p id="progressText" class="text-center text-sm text-light-text-sec dark:text-gray-400 mt-2">Processing...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="resultsSection" class="hidden space-y-8">
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-semibold text-light-text dark:text-white mb-4 flex items-center gap-2"><i data-lucide="info" class="w-5 h-5 text-blue-400"></i>Document Information</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="documentInfo"></div>
+            </div>
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex flex-wrap border-b border-light-border dark:border-dark-border mb-6">
+                    <button class="tab-btn active" data-tab="text"><i data-lucide="file-text"></i>Text</button>
+                    <button class="tab-btn" data-tab="summary"><i data-lucide="file-minus"></i>Summary</button>
+                    <button class="tab-btn" data-tab="keywords"><i data-lucide="key"></i>Keywords</button>
+                    <button class="tab-btn" data-tab="pii"><i data-lucide="shield"></i>PII</button>
+                    <button class="tab-btn" data-tab="entities"><i data-lucide="tags"></i>Entities</button>
+                    <button class="tab-btn" data-tab="analytics"><i data-lucide="bar-chart-3"></i>Analytics</button>
+                    <button class="tab-btn" data-tab="search"><i data-lucide="search"></i>Search</button>
+                    <button class="tab-btn" data-tab="quiz"><i data-lucide="file-question"></i>Quiz</button>
+                </div>
+                <div class="tab-content">
+                    <div id="text-tab" class="tab-pane active">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                            <h4 class="text-lg font-medium text-light-text dark:text-white">Document Text</h4>
+                            
+                            <div id="translateControls" class="hidden flex items-center gap-2">
+                                <select id="translateLangSelect" class="w-full sm:w-auto bg-light-card border border-light-border text-light-text dark:bg-dark-card dark:border-dark-border dark:text-white focus:border-blue-400 focus:outline-none rounded-lg px-3 py-2 text-sm">
+                                    <option value="en">English</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="it">Italian</option><option value="pt">Portuguese</option><option value="ru">Russian</option><option value="ja">Japanese</option><option value="ko">Korean</option><option value="zh">Chinese</option><option value="ar">Arabic</option>
+                                </select>
+                                <button id="translateBtn" class="action-btn-primary text-sm">
+                                    <i data-lucide="languages" class="w-4 h-4 button-icon-el"></i>
+                                    <span class="spinner"></span>
+                                    <span>Translate</span>
+                                </button>
+                                <button id="showOriginalBtn" class="action-btn text-sm hidden">
+                                    <i data-lucide="rewind" class="w-4 h-4 button-icon-el"></i>
+                                    <span>Show Original</span>
+                                </button>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button id="listenTextBtn" class="action-btn"><i data-lucide="volume-2" class="button-icon-el"></i><span>Listen</span></button>
+                                <button id="copyTextBtn" class="action-btn"><i data-lucide="copy"></i>Copy</button>
+                                <button id="downloadTextBtn" class="action-btn-primary"><i data-lucide="download"></i>Download</button>
+                            </div>
+                        </div>
+                        <div id="outputText" class="result-box"></div>
+                    </div>
+                    <div id="summary-tab" class="tab-pane hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-lg font-medium text-light-text dark:text-white">AI Summary</h4>
+                            <div class="flex gap-2">
+                                <button id="listenSummaryBtn" class="action-btn"><i data-lucide="volume-2" class="button-icon-el"></i><span>Listen</span></button>
+                                <button id="copySummaryBtn" class="action-btn"><i data-lucide="copy"></i>Copy</button>
+                            </div>
+                        </div>
+                        <div id="summary" class="result-box"></div>
+                    </div>
+                    <div id="keywords-tab" class="tab-pane hidden">
+                        <h4 class="text-lg font-medium text-light-text dark:text-white mb-4">Keywords & Keyphrases</h4>
+                        <div id="keywordsContainer" class="flex flex-wrap gap-3"></div>
+                    </div>
+                    <div id="pii-tab" class="tab-pane hidden">
+                        <h4 class="text-lg font-medium text-light-text dark:text-white mb-4">Detected Personal Information</h4>
+                        <div id="piiContainer" class="space-y-3"></div>
+                    </div>
+                    <div id="entities-tab" class="tab-pane hidden">
+                        <h4 class="text-lg font-medium text-light-text dark:text-white mb-4">Named Entities</h4><div id="entitiesContainer" class="space-y-3"></div>
+                    </div>
+                    <div id="analytics-tab" class="tab-pane hidden">
+                        <h4 class="text-lg font-medium text-light-text dark:text-white mb-4">Document Statistics</h4><div id="analyticsContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                    </div>
+                    <div id="search-tab" class="tab-pane hidden">
+                        <h4 class="text-lg font-medium text-light-text dark:text-white mb-4">Search in Document</h4>
+                        <div class="flex gap-3 mb-4"><input id="searchInput" type="text" placeholder="Search for keywords..." class="flex-1 form-control"><button id="searchBtn" class="action-btn-primary"><i data-lucide="search"></i></button></div>
+                        <div id="searchResults" class="space-y-3"></div>
+                    </div>
+                    <div id="quiz-tab" class="tab-pane hidden">
+                        <h4 class="text-lg font-medium text-light-text dark:text-white mb-4">Test Your Knowledge</h4>
+                        <div id="quizContainer" class="space-y-6">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="qaSection" class="hidden glass-card rounded-2xl p-6">
+            <h3 class="text-xl font-semibold text-light-text dark:text-white mb-4 flex items-center gap-2"><i data-lucide="message-circle-question" class="w-5 h-5 text-purple-400"></i>Ask Questions About Your Document</h3>
+            <div class="space-y-4">
+                <div class="flex gap-3"><input id="questionInput" type="text" placeholder="Ask anything about the document..." class="flex-1 form-control"><button id="askBtn" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-medium rounded-lg flex items-center gap-2"><i data-lucide="send" id="ask-button-icon" class="button-icon-el"></i><span class="spinner"></span><span id="ask-button-text">Ask</span></button></div>
+                <div class="bg-light-bg dark:bg-dark-card rounded-lg p-4 min-h-[100px]"><div id="answer" class="text-light-text-sec dark:text-gray-300 whitespace-pre-wrap">Ask a question to get an AI-powered answer.</div></div>
+                <div id="suggestedQuestionsContainer">
+                    <p class="text-sm text-light-text-sec dark:text-gray-400 mb-2">Suggestions:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="suggestion-btn">What is the main topic?</button>
+                        <button class="suggestion-btn">Summarize the key points</button>
+                        <button class="suggestion-btn">What are the main entities mentioned?</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="historySection" class="glass-card rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-semibold text-light-text dark:text-white flex items-center gap-2"><i data-lucide="history" class="w-5 h-5 text-green-400"></i>Document History</h3><button id="clearHistoryBtn" class="action-btn text-red-500 dark:text-red-400 hidden"><i data-lucide="trash-2"></i>Clear All</button></div>
+            <div id="historyContainer" class="space-y-3"></div>
+        </section>
+    </main>
+
+    <div id="helpModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-light-card dark:bg-dark-card rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-light-border dark:border-dark-border shadow-2xl">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold text-light-text dark:text-white">How to Use DocuLinguaAI</h3><button id="closeHelpBtn" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"><i data-lucide="x"></i></button></div>
+            <div class="space-y-6 text-light-text-sec dark:text-gray-300">
+                <div><h4 class="font-semibold text-light-text dark:text-white mb-2">🚀 Getting Started</h4><ol class="list-decimal list-inside space-y-2 text-sm"><li>Sign in with your Google Account.</li><li>Click or drag a file onto the upload area.</li><li>Click "Analyze Document" and wait for the magic.</li><li>Explore results in the tabs (Text, Summary, etc.).</li><li>Use the on-demand translate button in the 'Text' tab.</li><li>Use the Q&A section to ask specific questions.</li></ol></div>
+                <div><h4 class="font-semibold text-light-text dark:text-white mb-2">📋 Features</h4><ul class="list-disc list-inside space-y-2 text-sm"><li><b>Secure Sign-In:</b> Your session is secured with Google Authentication.</li><li><b>Multi-format Support:</b> PDF, DOCX, TXT, and common image files.</li><li><b>On-Demand Translation:</b> Translate to over 10 major languages when you need it.</li><li><b>AI Analysis:</b> Get summaries, keywords, sentiment, and named entities from the original text.</li>
+                    <li><b>Interactive Highlighting:</b> Entities are highlighted directly in the original text.</li>
+                    <li><b>AI Q&A:</b> Get intelligent, context-aware answers.</li><li><b>Document History:</b> Access and manage your recently processed documents.</li></ul></div>
+                <div><h4 class="font-semibold text-light-text dark:text-white mb-2">💡 Pro Tips</h4><ul class="list-disc list-inside space-y-2 text-sm"><li>For best results with images (OCR), use clear, high-resolution files.</li><li>The main analysis is performed on the original text for speed and accuracy.</li><li>Your document history is stored securely on our servers.</li></ul></div>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="audioPlayer" class="hidden"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
